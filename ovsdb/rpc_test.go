@@ -18,8 +18,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/digitalocean/go-openvswitch/ovsdb"
-	"github.com/digitalocean/go-openvswitch/ovsdb/internal/jsonrpc"
+	"github.com/aau-network-security/openvswitch/ovsdb"
+	"github.com/aau-network-security/openvswitch/ovsdb/internal/jsonrpc"
 	"github.com/google/go-cmp/cmp"
 )
 
@@ -70,7 +70,7 @@ func TestClientEchoError(t *testing.T) {
 }
 
 func TestClientEchoOK(t *testing.T) {
-	const echo = "github.com/digitalocean/go-openvswitch/ovsdb"
+	const echo = "github.com/aau-network-security/openvswitch/ovsdb"
 
 	c, _, done := testClient(t, func(req jsonrpc.Request) jsonrpc.Response {
 		if diff := cmp.Diff("echo", req.Method); diff != "" {
