@@ -20,7 +20,7 @@ import (
 	"strings"
 	"unsafe"
 
-	"github.com/digitalocean/go-openvswitch/ovsnl/internal/ovsh"
+	"github.com/aau-network-security/openvswitch/ovsnl/internal/ovsh"
 	"github.com/mdlayher/genetlink"
 )
 
