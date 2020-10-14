@@ -9,12 +9,12 @@ func TestClientDockerAddPortOK(t *testing.T) {
 	bridge := "br0"
 	iface := "eth0"
 	container := "ubuntu"
-    options := DockerOptions{
-        IPAddress:  "192.168.1.2",
-        Gateway:    "192.168.1.1",
-        MACAddress: "c1:9c:64:9a:bb:c3",
-        MTU:        "1500",
-    }
+	options := DockerOptions{
+		IPAddress:  "192.168.1.2",
+		Gateway:    "192.168.1.1",
+		MACAddress: "c1:9c:64:9a:bb:c3",
+		MTU:        "1500",
+	}
 
 	// Apply Timeout option to verify arguments
 	c := testClient([]OptionFunc{Timeout(1)}, func(cmd string, args ...string) ([]byte, error) {
@@ -24,7 +24,7 @@ func TestClientDockerAddPortOK(t *testing.T) {
 				want, got)
 		}
 
-		wantArgs := []string{"--timeout=1", "add-port", string(bridge), string(iface), string(container),"--ipaddress=192.168.1.2","--macaddress=c1:9c:64:9a:bb:c3","--gateway=192.168.1.1","--mtu=1500"}
+		wantArgs := []string{"--timeout=1", "add-port", string(bridge), string(iface), string(container), "--ipaddress=192.168.1.2", "--macaddress=c1:9c:64:9a:bb:c3", "--gateway=192.168.1.1", "--mtu=1500"}
 		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
 			t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
 				want, got)
@@ -33,7 +33,7 @@ func TestClientDockerAddPortOK(t *testing.T) {
 		return nil, nil
 	})
 
-	if err := c.Docker.AddPort(bridge, iface, container,options); err != nil {
+	if err := c.Docker.AddPort(bridge, iface, container, options); err != nil {
 		t.Fatalf("unexpected error for Client.VSwitch.AddPort: %v", err)
 	}
 }
@@ -42,7 +42,7 @@ func TestClientDockerSetVlanOK(t *testing.T) {
 	bridge := "br0"
 	iface := "eth0"
 	container := "ubuntu"
-    vlan := "5"
+	vlan := "5"
 
 	// Apply Timeout option to verify arguments
 	c := testClient([]OptionFunc{Timeout(1)}, func(cmd string, args ...string) ([]byte, error) {
@@ -52,7 +52,7 @@ func TestClientDockerSetVlanOK(t *testing.T) {
 				want, got)
 		}
 
-		wantArgs := []string{"--timeout=1", "set-vlan", string(bridge), string(iface), string(container),string(vlan)}
+		wantArgs := []string{"--timeout=1", "set-vlan", string(bridge), string(iface), string(container), string(vlan)}
 		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
 			t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
 				want, got)
@@ -61,7 +61,7 @@ func TestClientDockerSetVlanOK(t *testing.T) {
 		return nil, nil
 	})
 
-	if err := c.Docker.SetVlan(bridge, iface, container,vlan); err != nil {
+	if err := c.Docker.SetVlan(bridge, iface, container, vlan); err != nil {
 		t.Fatalf("unexpected error for Client.VSwitch.AddPort: %v", err)
 	}
 }
