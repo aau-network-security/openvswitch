@@ -28,8 +28,8 @@ jobs:
       - name: Install OVS-docker
         run: |
           cd /usr/bin
-          wget https://raw.githubusercontent.com/openvswitch/ovs/master/utilities/ovs-docker
-          chmod a+rwx ovs-docker
+          sudo wget https://raw.githubusercontent.com/openvswitch/ovs/master/utilities/ovs-docker
+          sudo chmod a+rwx ovs-docker
 
       - name: Get Lint
         run: |
