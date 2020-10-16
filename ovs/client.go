@@ -36,6 +36,9 @@ type Client struct {
 	// VSwitch wraps functionality of the 'ovs-vsctl' binary.
 	VSwitch *VSwitchService
 
+	// Docker wraps functionality of the 'ovs-docker' binary
+	Docker *DockerService
+
 	// Additional flags applied to all OVS actions, such as timeouts
 	// or retries.
 	flags []string
@@ -218,6 +221,10 @@ func New(options ...OptionFunc) *Client {
 	for _, o := range options {
 		o(c)
 	}
+	dss := &DockerService{
+		c: c,
+	}
+	c.Docker = dss
 
 	vss := &VSwitchService{
 		c: c,
