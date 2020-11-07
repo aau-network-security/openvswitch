@@ -25,6 +25,12 @@ jobs:
           sudo apt install -y openvswitch-switch &&
           sudo ovs-vsctl add-br ovsbr0
 
+      - name: Install OVS-docker
+        run: |
+          cd /usr/bin
+          sudo wget https://raw.githubusercontent.com/openvswitch/ovs/master/utilities/ovs-docker
+          sudo chmod a+rwx ovs-docker
+
       - name: Get Lint
         run: |
           go get -u golang.org/x/lint/golint
@@ -55,4 +61,3 @@ jobs:
           go test -race ./... &&
           go test -c -race ./ovsdb &&
           sudo ./ovsdb.test -test.v
-
