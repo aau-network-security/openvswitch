@@ -2,6 +2,9 @@ package ovs
 
 import "fmt"
 
+// Note that following functions should be executed
+// through the version of ovs-docker located under scripts/ovs-docker
+
 // A DockerService is used in a Client to execute 'ovs-docker' commands.
 type DockerService struct {
 	// Wrapped Client for ExecFunc and debugging.
@@ -49,6 +52,10 @@ type DockerOptions struct {
 	// Gateway is used to add a route to the docker container
 	Gateway string
 	MTU     string
+	// DHCP true or not
+	DHCP bool
+	// VLAN
+	VlanTag string
 }
 
 func (d DockerOptions) slice() []string {
@@ -66,6 +73,12 @@ func (d DockerOptions) slice() []string {
 	if d.MTU != "" {
 		s = append(s, fmt.Sprintf("--mtu=%s", d.MTU))
 	}
+	if d.DHCP {
+		s = append(s, fmt.Sprintf("--dhcp=%v", d.DHCP))
+	}
 
+	if d.VlanTag != "" {
+		s = append(s, fmt.Sprintf("--vlan=%s", d.VlanTag))
+	}
 	return s
 }
