@@ -17,9 +17,11 @@ package ovs
 import (
 	"bytes"
 	"fmt"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"io"
 	"io/ioutil"
-	"log"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -204,8 +206,9 @@ func (c *Client) debugf(format string, a ...interface{}) {
 	if !c.debug {
 		return
 	}
-
-	log.Printf("ovs: "+format, a...)
+	zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	log.Debug().Msgf("Ovs %s %v ", format, a)
 }
 
 // New creates a new Client with zero or more OptionFunc configurations
