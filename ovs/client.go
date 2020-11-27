@@ -208,7 +208,10 @@ func (c *Client) debugf(format string, a ...interface{}) {
 	}
 	zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-	log.Debug().Msgf("Ovs %s %v ", format, a)
+	if format != "" || a != nil {
+		log.Debug().Msgf("Ovs ", format, a)
+	}
+
 }
 
 // New creates a new Client with zero or more OptionFunc configurations
