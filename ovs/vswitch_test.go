@@ -170,7 +170,7 @@ func TestClientVSwitchDeletePortOK(t *testing.T) {
 
 func TestClientVSwitchCreateMirrorOK(t *testing.T) {
 	bridge := "br0"
-	mirrorName:= "testmirror"
+	mirrorName := "testmirror"
 
 	// Apply Timeout option to verify arguments
 	c := testClient([]OptionFunc{Timeout(1)}, func(cmd string, args ...string) ([]byte, error) {
@@ -180,8 +180,8 @@ func TestClientVSwitchCreateMirrorOK(t *testing.T) {
 				want, got)
 		}
 
-		wantArgs := []string{"--id=@m", "create",mirrorName,
-			"--","add bridge", bridge, "mirrors @m" }
+		wantArgs := []string{"--id=@m", "create", mirrorName,
+			"--", "add bridge", bridge, "mirrors @m"}
 		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
 			t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
 				want, got)
@@ -190,14 +190,14 @@ func TestClientVSwitchCreateMirrorOK(t *testing.T) {
 		return nil, nil
 	})
 
-	if err := c.VSwitch.CreateMirrorforBridge(mirrorName,bridge); err != nil {
+	if err := c.VSwitch.CreateMirrorforBridge(mirrorName, bridge); err != nil {
 		t.Fatalf("unexpected error for Client.VSwitch.CreateMirrorforBridge: %v", err)
 	}
 }
 
 func TestClientVSwitchDeleteMirrorBridgeOK(t *testing.T) {
 	bridge := "br0"
-	mirrorName:= "testmirror"
+	mirrorName := "testmirror"
 
 	// Apply Timeout option to verify arguments
 	c := testClient([]OptionFunc{Timeout(1)}, func(cmd string, args ...string) ([]byte, error) {
@@ -207,7 +207,7 @@ func TestClientVSwitchDeleteMirrorBridgeOK(t *testing.T) {
 				want, got)
 		}
 
-		wantArgs := []string{"--id=@m", "get mirror", mirrorName, "--","remove bridge", bridge, "mirrors @m"}
+		wantArgs := []string{"--id=@m", "get mirror", mirrorName, "--", "remove bridge", bridge, "mirrors @m"}
 		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
 			t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
 				want, got)
@@ -216,14 +216,12 @@ func TestClientVSwitchDeleteMirrorBridgeOK(t *testing.T) {
 		return nil, nil
 	})
 
-	if err := c.VSwitch.DeleteMirrorBridge(mirrorName,bridge); err != nil {
+	if err := c.VSwitch.DeleteMirrorBridge(mirrorName, bridge); err != nil {
 		t.Fatalf("unexpected error for Client.VSwitch.CreateMirrorforBridge: %v", err)
 	}
 }
 
-
 //TODO:Finish all tests if Works
-
 
 func TestClientVSwitchSetControllerOK(t *testing.T) {
 	bridge := "br0"
