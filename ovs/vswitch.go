@@ -96,7 +96,7 @@ func (v *VSwitchService) ListPorts(bridge string) ([]string, error) {
 //CreateMirrorforBridge is creating a mirror for certain bridge in Open Vswitch
 func (v *VSwitchService) CreateMirrorforBridge(mirrorName string, bridgeName string) error {
 	//ovs-vsctl -- --id=@m create mirror name=mirrorName -- add bridge SW mirrors @m
-	_, err := v.exec("--id=@m", "create", mirrorName, "--", "add bridge", bridgeName, "mirrors @m")
+	_, err := v.exec("--id=@m", "create mirror name=%s", mirrorName, "--", "add bridge", bridgeName, "mirrors @m")
 	return err
 }
 
@@ -110,7 +110,7 @@ func (v *VSwitchService) DeleteMirrorBridge(mirrorName string, bridgeName string
 //DeleteAllMirrorsBridge deletes all mirrors from a bridge
 func (v *VSwitchService) DeleteAllMirrorsBridge(bridgeName string) error {
 	//ovs-vsctl clear bridge ovsbr0 mirrors
-	_, err := v.exec("clear bridge", bridgeName, "mirrors")
+	_, err := v.exec("clear bridge %s", bridgeName, "mirrors")
 	return err
 }
 
