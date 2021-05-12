@@ -96,14 +96,14 @@ func (v *VSwitchService) ListPorts(bridge string) ([]string, error) {
 //CreateMirrorforBridge is creating a mirror for certain bridge in Open Vswitch
 func (v *VSwitchService) CreateMirrorforBridge(mirrorName string, bridgeName string) error {
 	//ovs-vsctl -- --id=@m create mirror name=mirrorName -- add bridge SW mirrors @m
-	_, err := v.exec("--id=@m", "create mirror name=%s", mirrorName, "--", "add bridge", bridgeName, "mirrors @m")
+	_, err := v.exec("--id=@m", "create mirror", "name=%s", mirrorName, "--", "add bridge", bridgeName, "mirrors @m")
 	return err
 }
 
 //DeleteMirrorBridge deletes a mirror from a bridge
 func (v *VSwitchService) DeleteMirrorBridge(mirrorName string, bridgeName string) error {
 	//ovs-vsctl -- --id=@m get mirror mymirror -- remove bridge ovsbr0 mirrors @m
-	_, err := v.exec("--id=@m", "get mirror", mirrorName, "--", "remove bridge", bridgeName, "mirrors @m")
+	_, err := v.exec("--id=@m", "get mirror %s", mirrorName, "--", "remove bridge", bridgeName, "mirrors @m")
 	return err
 }
 
