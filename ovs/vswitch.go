@@ -94,31 +94,34 @@ func (v *VSwitchService) ListPorts(bridge string) ([]string, error) {
 }
 
 //CreateMirrorforBridge is creating a mirror for certain bridge in Open Vswitch
-func (v *VSwitchService) CreateMirrorforBridge(mirrorName string, bridgeName string) error {
+func (v *VSwitchService) CreateMirrorforBridge(mirroN string, bridgeName string) error {
 	//ovs-vsctl -- --id=@m create mirror name=mirrorName -- add bridge SW mirrors @m
-	_, err := v.exec("--id=@m", "create mirror", "name=%s", mirrorName, "--", "add bridge", bridgeName, "mirrors @m")
+	mirrorName := fmt.Sprintf("name=%s", mirroN)
+
+	_, err := v.exec("--id=@m", "create mirror", mirrorName, "--", "add bridge", bridgeName, "mirrors @m")
 	return err
 }
 
 //DeleteMirrorBridge deletes a mirror from a bridge
 func (v *VSwitchService) DeleteMirrorBridge(mirrorName string, bridgeName string) error {
 	//ovs-vsctl -- --id=@m get mirror mymirror -- remove bridge ovsbr0 mirrors @m
-	_, err := v.exec("--id=@m", "get mirror %s", mirrorName, "--", "remove bridge", bridgeName, "mirrors @m")
+
+	_, err := v.exec("--id=@m", "get mirror", mirrorName, "--", "remove bridge", bridgeName, "mirrors @m")
 	return err
 }
 
 //DeleteAllMirrorsBridge deletes all mirrors from a bridge
 func (v *VSwitchService) DeleteAllMirrorsBridge(bridgeName string) error {
 	//ovs-vsctl clear bridge ovsbr0 mirrors
-	_, err := v.exec("clear bridge %s", bridgeName, "mirrors")
+	_, err := v.exec("clear bridge", bridgeName, "mirrors")
 	return err
 }
 
 //MirrorVlan gets all the traffic from a VLAN
 func (v *VSwitchService) MirrorVlan(mirrorName string, mirrorPort string, vlan string) error {
 	//ovs-vsctl -- --id=@mirrorPort get port mirrorPort -- set mirror mirrorName select_vlan=10 select_dst_port=@mirrorPort
-	_, err := v.exec("--id=@%s", mirrorPort, "get port %s", mirrorPort,
-		"--", "set mirror %s", mirrorName, "select_vlan=%s", vlan, "select_dst_port=@%s", mirrorPort)
+	_, err := v.exec("--id=@", mirrorPort, "get port ", mirrorPort,
+		"--", "set mirror ", mirrorName, "select_vlan=", vlan, "select_dst_port=@", mirrorPort)
 	return err
 }
 
@@ -126,8 +129,8 @@ func (v *VSwitchService) MirrorVlan(mirrorName string, mirrorPort string, vlan s
 func (v *VSwitchService) MirrorAllVlans(mirrorName string, mirrorPort string, vlans []string) error {
 	//ovs-vsctl --id=@getBlue get port mirrorPort -- set mirror mirrorName select_all=true select_vlan=10,20,30 output-port=@getBlue
 	vlansToString := strings.Join(vlans, ",")
-	_, err := v.exec("--id=@%s", mirrorPort, "get port %s", mirrorPort,
-		"--", "set mirror %s", mirrorName, "select_all=true", "select_vlan=%s", vlansToString, "output-port=@%s", mirrorPort)
+	_, err := v.exec("--id=@", mirrorPort, "get port ", mirrorPort,
+		"--", "set mirror ", mirrorName, "select_all=true", "select_vlan=", vlansToString, "output-port=@", mirrorPort)
 	return err
 }
 
