@@ -180,8 +180,8 @@ func TestClientVSwitchCreateMirrorOK(t *testing.T) {
 				want, got)
 		}
 
-		wantArgs := []string{"--timeout=1", "--id=@m", "create mirror", "name=%s", mirrorName,
-			"--", "add bridge", bridge, "mirrors @m"}
+		mirrorN := fmt.Sprintf("name=%s", mirrorName)
+		wantArgs := []string{"--timeout=1", "--id=@m create mirror", mirrorN, "-- add bridge", bridge, "mirrors @m"}
 		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
 			t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
 				want, got)
@@ -207,7 +207,7 @@ func TestClientVSwitchDeleteMirrorBridgeOK(t *testing.T) {
 				want, got)
 		}
 
-		wantArgs := []string{"--timeout=1", "--id=@m", "get mirror %s", mirrorName, "--", "remove bridge", bridge, "mirrors @m"}
+		wantArgs := []string{"--timeout=1", "--id=@m", "get mirror", mirrorName, "--", "remove bridge", bridge, "mirrors @m"}
 		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
 			t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
 				want, got)
@@ -235,7 +235,7 @@ func TestClientVSwitchDeleteAllMirrorsBridgeOK(t *testing.T) {
 				want, got)
 		}
 
-		wantArgs := []string{"--timeout=1", "clear bridge %s", bridge, "mirrors"}
+		wantArgs := []string{"--timeout=1", "clear bridge", bridge, "mirrors"}
 		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
 			t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
 				want, got)
@@ -264,7 +264,7 @@ func TestClientVSwitchMirrorVlanOK(t *testing.T) {
 				want, got)
 		}
 
-		wantArgs := []string{"--timeout=1", "--id=@%s", mirrorPort, "get port %s", mirrorPort,
+		wantArgs := []string{"--timeout=1", "--id=@", mirrorPort, "get port", mirrorPort,
 			"--", "set mirror %s", mirrorName, "select_vlan=%s", vlan, "select_dst_port=@%s", mirrorPort}
 
 		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
