@@ -96,9 +96,9 @@ func (v *VSwitchService) ListPorts(bridge string) ([]string, error) {
 //CreateMirrorforBridge is creating a mirror for certain bridge in Open Vswitch
 func (v *VSwitchService) CreateMirrorforBridge(mirroN string, bridgeName string) error {
 	//ovs-vsctl -- --id=@m create mirror name=mirrorName -- add bridge SW mirrors @m
-	mirrorName := fmt.Sprintf("name=%s", mirroN)
+	//mirrorName := fmt.Sprintf("name=%s", mirroN)
 
-	_, err := v.exec("--id=@m", "create mirror", mirrorName, "--", "add bridge", bridgeName, "mirrors @m")
+	_, err := v.exec("--id=@m", "create", "mirror", mirroN, "--", "add", "bridge", bridgeName, "mirrors", "@m")
 	return err
 }
 
