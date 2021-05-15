@@ -235,7 +235,7 @@ func TestClientVSwitchDeleteMirrorBridgeOK(t *testing.T) {
 				want, got)
 		}
 
-		wantArgs := []string{"--timeout=1", "--id=@m", "get mirror", mirrorName, "--", "remove bridge", bridge, "mirrors @m"}
+		wantArgs := []string{"--timeout=1", "--id=@m", "get", "mirror", mirrorName, "--", "remove", "bridge", bridge, "mirrors @m"}
 		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
 			t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
 				want, got)
