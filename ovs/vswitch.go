@@ -129,8 +129,8 @@ func (v *VSwitchService) MirrorVlan(mirrorName string, mirrorPort string, vlan s
 func (v *VSwitchService) MirrorAllVlans(mirrorName string, mirrorPort string, vlans []string) error {
 	//ovs-vsctl --id=@getBlue get port mirrorPort -- set mirror mirrorName select_all=true select_vlan=10,20,30 output-port=@getBlue
 	vlansToString := strings.Join(vlans, ",")
-	_, err := v.exec(fmt.Sprintf("--id=@%s", mirrorPort), "get port ", mirrorPort,
-		"--", "set mirror ", mirrorName, "select_all=true", fmt.Sprintf("select_vlan=%s", vlansToString), fmt.Sprintf("output-port=@%s", mirrorPort))
+	_, err := v.exec(fmt.Sprintf("--id=@%s", mirrorPort), "get port", mirrorPort,
+		"--", "set mirror", mirrorName, "select_all=true", fmt.Sprintf("select_vlan=%s", vlansToString), fmt.Sprintf("output-port=@%s", mirrorPort))
 	return err
 }
 

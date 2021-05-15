@@ -300,8 +300,8 @@ func TestClientVSwitchMirrorAllVlansOK(t *testing.T) {
 				want, got)
 		}
 
-		wantArgs := []string{"--timeout=1", fmt.Sprintf("--id=@%s", mirrorPort), "get port ", mirrorPort,
-			"--", "set mirror ", mirrorName, "select_all=true", fmt.Sprintf("select_vlan=%s", vlansToString), fmt.Sprintf("output-port=@%s", mirrorPort)}
+		wantArgs := []string{"--timeout=1", fmt.Sprintf("--id=@%s", mirrorPort), "get port", mirrorPort,
+			"--", "set mirror", mirrorName, "select_all=true", fmt.Sprintf("select_vlan=%s", vlansToString), fmt.Sprintf("output-port=@%s", mirrorPort)}
 
 		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
 			t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
