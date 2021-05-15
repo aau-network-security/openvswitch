@@ -64,10 +64,10 @@ func (v *VSwitchService) AddPortTagged(bridge string, port string, vlanid string
 }
 
 // GetPortUUID gets the port UUID from the database.
-func (v *VSwitchService) GetPortUUID(port string) (error, string) {
+func (v *VSwitchService) GetPortUUID(port string) (string, error) {
 	//ovs-vsctl get port ALLblue _uuid
 	portUUID, err := v.exec("get", "port", string(port), "_uuid")
-	return err, string(portUUID)
+	return string(portUUID), err
 }
 
 // DeleteBridge detaches a bridge from Open vSwitch.  The bridge may or may

@@ -191,7 +191,7 @@ func TestClientVSwitchGetPortUUID(t *testing.T) {
 			return nil, nil
 		})
 
-	if err, _ := c.VSwitch.GetPortUUID(port); err != nil {
+	if _, err := c.VSwitch.GetPortUUID(port); err != nil {
 		t.Fatalf("unexpected error for Client.VSwitch.DeletePort: %v", err)
 	}
 }
