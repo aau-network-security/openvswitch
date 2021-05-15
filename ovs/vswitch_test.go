@@ -147,6 +147,60 @@ func TestClientVSwitchDeletePortOK(t *testing.T) {
 	port := "bond0"
 
 	// Apply Timeout option to verify arguments
+	c := testClient(
+		[]OptionFunc{Timeout(1)}, func(cmd string, args ...string) ([]byte, error) {
+			// Verify correct command and arguments passed, including option flags
+			if want, got := "ovs-vsctl", cmd; want != got {
+				t.Fatalf("incorrect command:\n- want: %v\n-  got: %v",
+					want, got)
+			}
+
+			wantArgs := []string{"--timeout=1", "--if-exists", "del-port", string(bridge), string(port)}
+			if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
+				t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
+					want, got)
+			}
+
+			return nil, nil
+		})
+
+	if err := c.VSwitch.DeletePort(bridge, port); err != nil {
+		t.Fatalf("unexpected error for Client.VSwitch.DeletePort: %v", err)
+	}
+}
+
+func TestClientVSwitchGetPortUUID(t *testing.T) {
+
+	port := "bond0"
+
+	// Apply Timeout option to verify arguments
+	c := testClient(
+		[]OptionFunc{Timeout(1)}, func(cmd string, args ...string) ([]byte, error) {
+			// Verify correct command and arguments passed, including option flags
+			if want, got := "ovs-vsctl", cmd; want != got {
+				t.Fatalf("incorrect command:\n- want: %v\n-  got: %v",
+					want, got)
+			}
+
+			wantArgs := []string{"--timeout=1", "get", "port", string(port), "_uuid"}
+			if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
+				t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
+					want, got)
+			}
+
+			return nil, nil
+		})
+
+	if _, err := c.VSwitch.GetPortUUID(port); err != nil {
+		t.Fatalf("unexpected error for Client.VSwitch.DeletePort: %v", err)
+	}
+}
+
+func TestClientVSwitchCreateMirrorOK(t *testing.T) {
+	bridge := "br0"
+	mirrorName := "testmirror"
+
+	// Apply Timeout option to verify arguments
 	c := testClient([]OptionFunc{Timeout(1)}, func(cmd string, args ...string) ([]byte, error) {
 		// Verify correct command and arguments passed, including option flags
 		if want, got := "ovs-vsctl", cmd; want != got {
@@ -154,7 +208,34 @@ func TestClientVSwitchDeletePortOK(t *testing.T) {
 				want, got)
 		}
 
-		wantArgs := []string{"--timeout=1", "--if-exists", "del-port", string(bridge), string(port)}
+		mirrorN := fmt.Sprintf("name=%s", mirrorName)
+		wantArgs := []string{"--timeout=1", "--id=@m", "create", "mirror", mirrorN, "--", "add", "bridge", bridge, "mirrors", "@m"}
+		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
+			t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
+				want, got)
+		}
+		//t.Logf("Got %s", got)
+		return nil, nil
+	})
+
+	if err := c.VSwitch.CreateMirrorforBridge(mirrorName, bridge); err != nil {
+		t.Fatalf("unexpected error for Client.VSwitch.CreateMirrorforBridge: %v", err)
+	}
+}
+
+func TestClientVSwitchDeleteMirrorBridgeOK(t *testing.T) {
+	bridge := "br0"
+	mirrorName := "testmirror"
+
+	// Apply Timeout option to verify arguments
+	c := testClient([]OptionFunc{Timeout(1)}, func(cmd string, args ...string) ([]byte, error) {
+		// Verify correct command and arguments passed, including option flags
+		if want, got := "ovs-vsctl", cmd; want != got {
+			t.Fatalf("incorrect command:\n- want: %v\n-  got: %v",
+				want, got)
+		}
+
+		wantArgs := []string{"--timeout=1", "--id=@m", "get", "mirror", mirrorName, "--", "remove", "bridge", bridge, "mirrors @m"}
 		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
 			t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
 				want, got)
@@ -163,8 +244,100 @@ func TestClientVSwitchDeletePortOK(t *testing.T) {
 		return nil, nil
 	})
 
-	if err := c.VSwitch.DeletePort(bridge, port); err != nil {
-		t.Fatalf("unexpected error for Client.VSwitch.DeletePort: %v", err)
+	if err := c.VSwitch.DeleteMirrorBridge(mirrorName, bridge); err != nil {
+		t.Fatalf("unexpected error for Client.VSwitch.CreateMirrorforBridge: %v", err)
+	}
+}
+
+//DeleteAllMirrorsBridge
+
+func TestClientVSwitchDeleteAllMirrorsBridgeOK(t *testing.T) {
+	bridge := "br0"
+	//mirrorName := "testmirror"
+
+	// Apply Timeout option to verify arguments
+	c := testClient([]OptionFunc{Timeout(1)}, func(cmd string, args ...string) ([]byte, error) {
+		// Verify correct command and arguments passed, including option flags
+		if want, got := "ovs-vsctl", cmd; want != got {
+			t.Fatalf("incorrect command:\n- want: %v\n-  got: %v",
+				want, got)
+		}
+
+		wantArgs := []string{"--timeout=1", "clear bridge", bridge, "mirrors"}
+		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
+			t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
+				want, got)
+		}
+
+		return nil, nil
+	})
+
+	if err := c.VSwitch.DeleteAllMirrorsBridge(bridge); err != nil {
+		t.Fatalf("unexpected error for Client.VSwitch.CreateMirrorforBridge: %v", err)
+	}
+}
+
+//MirrorVlan
+func TestClientVSwitchMirrorVlanOK(t *testing.T) {
+	//bridge := "br0"
+	mirrorName := "testmirror"
+	mirrorPort := "mirrorPortTEST"
+	vlan := "10"
+	//vlan := [4] string{10,20,30,40}
+	// Apply Timeout option to verify arguments
+	c := testClient([]OptionFunc{Timeout(1)}, func(cmd string, args ...string) ([]byte, error) {
+		// Verify correct command and arguments passed, including option flags
+		if want, got := "ovs-vsctl", cmd; want != got {
+			t.Fatalf("incorrect command:\n- want: %v\n-  got: %v",
+				want, got)
+		}
+
+		wantArgs := []string{"--timeout=1", "set", "mirror", mirrorName, fmt.Sprintf("select_vlan=%s", vlan), fmt.Sprintf("select_dst_port=@%s", mirrorPort)}
+
+		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
+			t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
+				want, got)
+		}
+
+		return nil, nil
+	})
+
+	if err := c.VSwitch.MirrorVlan(mirrorName, mirrorPort, vlan); err != nil {
+		t.Fatalf("unexpected error for Client.VSwitch.CreateMirrorforBridge: %v", err)
+	}
+}
+
+//MirrorAllVlans
+
+func TestClientVSwitchMirrorAllVlansOK(t *testing.T) {
+	//bridge := "br0"
+	mirrorName := "testmirror"
+	mirrorPort := "mirrorPortTEST"
+	//vlan := "10"
+
+	vlans := []string{"10", "20", "30", "40"}
+	vlansToString := strings.Join(vlans, ",")
+
+	// Apply Timeout option to verify arguments
+	c := testClient([]OptionFunc{Timeout(1)}, func(cmd string, args ...string) ([]byte, error) {
+		// Verify correct command and arguments passed, including option flags
+		if want, got := "ovs-vsctl", cmd; want != got {
+			t.Fatalf("incorrect command:\n- want: %v\n-  got: %v",
+				want, got)
+		}
+
+		wantArgs := []string{"--timeout=1", "set", "mirror", mirrorName, "select_all=true", fmt.Sprintf("select_vlan=%s", vlansToString), fmt.Sprintf("output-port=%s", mirrorPort)}
+
+		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
+			t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
+				want, got)
+		}
+
+		return nil, nil
+	})
+
+	if err := c.VSwitch.MirrorAllVlans(mirrorName, mirrorPort, vlans); err != nil {
+		t.Fatalf("unexpected error for Client.VSwitch.CreateMirrorforBridge: %v", err)
 	}
 }
 
