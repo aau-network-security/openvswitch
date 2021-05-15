@@ -169,6 +169,33 @@ func TestClientVSwitchDeletePortOK(t *testing.T) {
 	}
 }
 
+func TestClientVSwitchGetPortUUID(t *testing.T) {
+
+	port := "bond0"
+
+	// Apply Timeout option to verify arguments
+	c := testClient(
+		[]OptionFunc{Timeout(1)}, func(cmd string, args ...string) ([]byte, error) {
+			// Verify correct command and arguments passed, including option flags
+			if want, got := "ovs-vsctl", cmd; want != got {
+				t.Fatalf("incorrect command:\n- want: %v\n-  got: %v",
+					want, got)
+			}
+
+			wantArgs := []string{"--timeout=1", "get", "port", string(port), "_uuid"}
+			if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
+				t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
+					want, got)
+			}
+
+			return nil, nil
+		})
+
+	if err, _ := c.VSwitch.GetPortUUID(port); err != nil {
+		t.Fatalf("unexpected error for Client.VSwitch.DeletePort: %v", err)
+	}
+}
+
 func TestClientVSwitchCreateMirrorOK(t *testing.T) {
 	bridge := "br0"
 	mirrorName := "testmirror"
@@ -265,8 +292,7 @@ func TestClientVSwitchMirrorVlanOK(t *testing.T) {
 				want, got)
 		}
 
-		wantArgs := []string{"--timeout=1", fmt.Sprintf("--id=@%s", mirrorPort), "get port ", mirrorPort,
-			"--", "set mirror", mirrorName, "select_vlan=", vlan, "select_dst_port=@", mirrorPort}
+		wantArgs := []string{"--timeout=1", "set", "mirror", mirrorName, fmt.Sprintf("select_vlan=%s", vlan), fmt.Sprintf("select_dst_port=@%s", mirrorPort)}
 
 		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
 			t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",
@@ -300,8 +326,7 @@ func TestClientVSwitchMirrorAllVlansOK(t *testing.T) {
 				want, got)
 		}
 
-		wantArgs := []string{"--timeout=1", fmt.Sprintf("--id=@%s", mirrorPort), "get port", mirrorPort,
-			"--", "set mirror", mirrorName, "select_all=true", fmt.Sprintf("select_vlan=%s", vlansToString), fmt.Sprintf("output-port=@%s", mirrorPort)}
+		wantArgs := []string{"--timeout=1", "set", "mirror", mirrorName, "select_all=true", fmt.Sprintf("select_vlan=%s", vlansToString), fmt.Sprintf("output-port=%s", mirrorPort)}
 
 		if want, got := wantArgs, args; !reflect.DeepEqual(want, got) {
 			t.Fatalf("incorrect arguments\n- want: %v\n-  got: %v",

@@ -63,6 +63,13 @@ func (v *VSwitchService) AddPortTagged(bridge string, port string, vlanid string
 	return err
 }
 
+// GetPortUUID gets the port UUID from the database.
+func (v *VSwitchService) GetPortUUID(port string) (error, string) {
+	//ovs-vsctl get port ALLblue _uuid
+	portUUID, err := v.exec("get", "port", string(port), "_uuid")
+	return err, string(portUUID)
+}
+
 // DeleteBridge detaches a bridge from Open vSwitch.  The bridge may or may
 // not already exist.
 func (v *VSwitchService) DeleteBridge(bridge string) error {
@@ -106,7 +113,7 @@ func (v *VSwitchService) CreateMirrorforBridge(mirroN string, bridgeName string)
 func (v *VSwitchService) DeleteMirrorBridge(mirrorName string, bridgeName string) error {
 	//ovs-vsctl -- --id=@m get mirror mymirror -- remove bridge ovsbr0 mirrors @m
 
-	_, err := v.exec("--id=@m", "get mirror", mirrorName, "--", "remove bridge", bridgeName, "mirrors @m")
+	_, err := v.exec("--id=@m", "get", "mirror", mirrorName, "--", "remove", "bridge", bridgeName, "mirrors @m")
 	return err
 }
 
@@ -118,19 +125,17 @@ func (v *VSwitchService) DeleteAllMirrorsBridge(bridgeName string) error {
 }
 
 //MirrorVlan gets all the traffic from a VLAN
-func (v *VSwitchService) MirrorVlan(mirrorName string, mirrorPort string, vlan string) error {
+func (v *VSwitchService) MirrorVlan(mirrorName string, mirrorPortUUID string, vlan string) error {
 	//ovs-vsctl -- --id=@mirrorPort get port mirrorPort -- set mirror mirrorName select_vlan=10 select_dst_port=@mirrorPort
-	_, err := v.exec(fmt.Sprintf("--id=@%s", mirrorPort), "get port ", mirrorPort,
-		"--", "set mirror", mirrorName, "select_vlan=", vlan, "select_dst_port=@", mirrorPort)
+	_, err := v.exec("set", "mirror", mirrorName, fmt.Sprintf("select_vlan=%s", vlan), fmt.Sprintf("select_dst_port=@%s", mirrorPortUUID))
 	return err
 }
 
 //MirrorAllVlans gets all traffic from VLANs
-func (v *VSwitchService) MirrorAllVlans(mirrorName string, mirrorPort string, vlans []string) error {
+func (v *VSwitchService) MirrorAllVlans(mirrorName string, mirrorPortUUID string, vlans []string) error {
 	//ovs-vsctl --id=@getBlue get port mirrorPort -- set mirror mirrorName select_all=true select_vlan=10,20,30 output-port=@getBlue
 	vlansToString := strings.Join(vlans, ",")
-	_, err := v.exec(fmt.Sprintf("--id=@%s", mirrorPort), "get port", mirrorPort,
-		"--", "set mirror", mirrorName, "select_all=true", fmt.Sprintf("select_vlan=%s", vlansToString), fmt.Sprintf("output-port=@%s", mirrorPort))
+	_, err := v.exec("set", "mirror", mirrorName, "select_all=true", fmt.Sprintf("select_vlan=%s", vlansToString), fmt.Sprintf("output-port=%s", mirrorPortUUID))
 	return err
 }
 
